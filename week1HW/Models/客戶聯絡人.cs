@@ -21,6 +21,7 @@ namespace week1HW.Models
         public string Email { get; set; }
         public string 手機 { get; set; }
         public string 電話 { get; set; }
+        public bool Deleted { get; set; }
     
         public virtual 客戶資料 客戶資料 { get; set; }
     }
