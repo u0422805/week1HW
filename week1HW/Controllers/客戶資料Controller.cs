@@ -13,11 +13,12 @@ namespace week1HW.Controllers
     public class 客戶資料Controller : Controller
     {
         private 客戶資料Entities db = new 客戶資料Entities();
-
+        客戶資料Repository repo = RepositoryHelper.Get客戶資料Repository();
         // GET: 客戶資料
         public ActionResult Index()
         {
-            return View(db.客戶資料.ToList());
+            var data = repo.All().AsQueryable();
+            return View(data.ToList());
         }
 
         // GET: 客戶資料/Details/5
@@ -50,8 +51,9 @@ namespace week1HW.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶資料.Add(客戶資料);
+                repo.Add(客戶資料);
                 db.SaveChanges();
+                repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
@@ -65,7 +67,7 @@ namespace week1HW.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = repo.Find(id.Value);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -82,8 +84,9 @@ namespace week1HW.Controllers
         {
             if (ModelState.IsValid)
             {
+                var db = repo.UnitOfWork.Context;
                 db.Entry(客戶資料).State = EntityState.Modified;
-                db.SaveChanges();
+                repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
             return View(客戶資料);
@@ -96,7 +99,7 @@ namespace week1HW.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = repo.Find(id.Value);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -109,19 +112,19 @@ namespace week1HW.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = repo.Find(id);
             db.客戶資料.Remove(客戶資料);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
     }
 }
